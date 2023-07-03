@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.PowerPlatform.Dataverse.ModelBuilderLib</id>
+    <version>1.0.0</version>
+    <authors>Microsoft</authors>
+    <owners>crmsdk,Microsoft</owners>
+    <licenseUrl>http://download.microsoft.com/download/E/1/8/E18C0FAD-FEC8-44CD-9A16-98EDC4DAC7A2/LicenseTerms.docx</licenseUrl>
+    <projectUrl>https://docs.microsoft.com/dynamics365/customer-engagement/developer/developer-guide</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <title>Microsoft Power Platform Model Builder Library</title>
+    <description>Dataverse Model Builder is used to generate classes and API contracts from Dataverse Metadata</description>
+    <summary>Used to Create Code Models for PowerPlatform Tables, API's and Choices. This utility is used in conjunction with the Dataverse ServiceClient and or the Dataverse Plugin System to support typed, rapid development of programs and plugins</summary>
+    <icon>images\Dataverse.128x128.png</icon>
+    <releaseNotes />
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <language>en-US</language>
+    <tags>Dynamics CRM 2016 SDK XRM D365 Dynamics365 365 Dataverse CDS PowerApps PowerPlatform</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="System.CodeDom" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Configuration.ConfigurationManager" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="6.0.7" exclude="Build,Analyzers" />
+        <dependency id="System.Xml.XmlDocument" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="System.CodeDom" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Configuration.ConfigurationManager" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="6.0.7" exclude="Build,Analyzers" />
+        <dependency id="System.Xml.XmlDocument" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Xml.XmlDocument" targetFramework=".NETFramework4.8" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="{sharedImagesDir}\Desktop\Dataverse.128x128.png" target="images\Dataverse.128x128.png" />
+    <file target="" src="{licenseDir}\LicenseTerms.docx" />
+    <file target="lib\net48\" src="{signedBinDir}\{configuration}\DvModelBuilder\net48\Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.dll" />
+    <file target="lib\net48\" src="{unsignedBinDir}\{configuration}\DvModelBuilder\net48\Microsoft.Crm.Sdk.Proxy.dll" />
+    <file target="lib\net48\" src="{unsignedBinDir}\{configuration}\DvModelBuilder\net48\Microsoft.Xrm.Sdk.dll" />
+    <file target="lib\net6.0\" src="{signedBinDir}\{configuration}\DvModelBuilder\net6.0\Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.dll" />
+    <file target="lib\net6.0\" src="{unsignedBinDir}\{configuration}\DvModelBuilder\net6.0\Microsoft.Crm.Sdk.Proxy.dll" />
+    <file target="lib\net6.0\" src="{unsignedBinDir}\{configuration}\DvModelBuilder\net6.0\Microsoft.Xrm.Sdk.dll" />
+  </files>
+</package>

@@ -1,0 +1,39 @@
+Notice: 
+    Class and Message Generation Utility library for the Power Platform Dataverse API.
+    Port of the CrmServiceUtility for use with PAC CLI and other hosts 
+    General Documentation about CrmServiceUtility can be found here:
+        https://docs.microsoft.com/en-us/power-apps/developer/data-platform/org-service/generate-early-bound-classes
+
+++CURRENTRELEASEID++
+    --- BREAKING CHANGES ---
+    Assembly and File Versions bumped to 2.x to denote breaking changes. 
+    Refactored ModelBuilderLib Constructor. 
+    Removed all console write operations for reporting status and replaced with events. 
+    Removed GenerateActions Command from invoker and Settings, Replaced with GenerateSdkMessages. 
+        - Existing settings files will read the value for GenerateActions and use it for GenerateSdkMessages. 
+    --- END BREAKING CHANGES ---
+    Added Ilogger Support for capturing detailed output. 
+    Added /emitEntityETC control for emitting ETC code in code base,  Defaulted is now to not emit ETC on write. 
+    Added /emitVirtualAttributes control for emitting Virtual Attributes as part of ModelBuilding. This allows access to "name" properties that are stored in the formatedvalues property bag. 
+        -- added at the request of git: https://github.com/microsoft/powerplatform-vscode/issues/509 
+    Updated Suppress Code Generation attribute behavior to remove tool version from files. 
+    Updated generation of field enums to a partial class to support the request on Git: https://github.com/microsoft/powerplatform-vscode/discussions/558
+    Fixed issue where Warning about not writhing Proxy attribute was not emitted to the console.  https://github.com/microsoft/powerplatform-vscode/issues/516
+    Fixed issue where SDK message builder would miss messages due to the volume of data being read from Dataverse. https://github.com/microsoft/powerplatform-vscode/issues/413
+
+1.0.23:
+    Fix for Messages requiring wild card specifiers.  You can now pass message names by themselves to the builder.
+    Fix for incorrect generation of messages that exist in Microsoft.Xrm.Sdk.Messages or Microsoft.Crm.Sdk.Messages namespaces. 
+
+1.0.18: 
+    Fix for GIT reported issue: https://github.com/microsoft/powerplatform-vscode/issues/362, Helped Dataverse Modelbuilder find its way... it now has a name and a version number. 
+    Fix for GIT reported issue https://github.com/microsoft/powerplatform-vscode/issues/361 , suppressINotifyPattern now properly acts as a toggle.
+    Fix for GIT reported issue: https://github.com/microsoft/powerplatform-vscode/issues/363  for missing description text for static functions.
+    Modified OptionSet Label value to respect the system default language configuration.
+
+1.0.9:
+    Fixed an issue where both /out and /outdirectory could be passed. This created a situation where there was confusion on which path directive would be used for writing. 
+    Fixed Perf issue where Messages were being loaded from Dataverse when they were not needed. 
+    
+1.0.4:
+    Initial Release of Cross Platform Port of the CrmServiceUtility as the DataverseModelBuilderLibrary

@@ -1,0 +1,43 @@
+﻿<fetch distinct='true' version='1.0'>
+	<entity name='sdkmessage'>
+		<attribute name='name'/>
+		<attribute name='isprivate'/>
+		<attribute name='sdkmessageid'/>
+		<link-entity name='sdkmessagepair' alias='sdkmessagepair' to='sdkmessageid' from='sdkmessageid' link-type='inner'>
+			<filter>
+				<condition alias='sdkmessagepair' attribute='endpoint' operator='eq' value='2011/Organization.svc' />
+			</filter>
+			<attribute name='sdkmessagepairid'/>
+			<attribute name='namespace'/>
+			<link-entity name='sdkmessagerequest' alias='sdkmessagerequest' to='sdkmessagepairid' from='sdkmessagepairid' link-type='outer'>
+				<attribute name='sdkmessagerequestid'/>
+				<attribute name='name'/>
+				<link-entity name='sdkmessagerequestfield' alias='sdkmessagerequestfield' to='sdkmessagerequestid' from='sdkmessagerequestid' link-type='outer'>
+					<attribute name='name'/>
+					<attribute name='optional'/>
+					<attribute name='position'/>
+					<attribute name='publicname'/>
+					<attribute name='clrparser'/>
+				</link-entity>
+				<link-entity name='sdkmessageresponse' alias='sdkmessageresponse' to='sdkmessagerequestid' from='sdkmessagerequestid' link-type='outer'>
+					<attribute name='sdkmessageresponseid'/>
+					<link-entity name='sdkmessageresponsefield' alias='sdkmessageresponsefield' to='sdkmessageresponseid' from='sdkmessageresponseid' link-type='outer'>
+						<attribute name='publicname'/>
+						<attribute name='value'/>
+						<attribute name='clrformatter'/>
+						<attribute name='name'/>
+						<attribute name='position' />
+					</link-entity>
+				</link-entity>
+			</link-entity>
+		</link-entity>
+		<link-entity name='sdkmessagefilter' alias='sdmessagefilter' to='sdkmessageid' from='sdkmessageid' link-type='inner'>
+			<filter>
+				<condition alias='sdmessagefilter' attribute='isvisible' operator='eq' value='1' />
+			</filter>
+			<attribute name='sdkmessagefilterid'/>
+			<attribute name='primaryobjecttypecode'/>
+			<attribute name='secondaryobjecttypecode'/>
+		</link-entity>
+	</entity>
+</fetch>

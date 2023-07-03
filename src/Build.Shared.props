@@ -1,0 +1,130 @@
+<Project>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <!-- msbuild properties shared for dotnetCore and .NET classic projects: -->
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <PackageVersion_Adal>3.19.8</PackageVersion_Adal>
+    <PackageVersion_MSAL>4.35.1</PackageVersion_MSAL>
+    <PackageVersion_CdsSdk>4.9.3165-v9.0-weekly-2304.2</PackageVersion_CdsSdk>
+    <PackageVersion_CrmProxy>4.9.3165-v9.0-weekly-2304.2</PackageVersion_CrmProxy>
+    <PackageVersion_CDSServerNuget>4.6.6061-weekly-2108.5</PackageVersion_CDSServerNuget>
+    <PackageVersion_Newtonsoft>13.0.1</PackageVersion_Newtonsoft>
+    <PackageVersion_RestClientRuntime>2.3.20</PackageVersion_RestClientRuntime>
+    <PackageVersion_XrmSdk>9.0.2.48</PackageVersion_XrmSdk>
+    <PackageVersion_Dep_OutlookXrmSdk>9.0.2.34</PackageVersion_Dep_OutlookXrmSdk>
+    <PackageVersion_BatchedTelemetry>3.0.8</PackageVersion_BatchedTelemetry>
+    <PackageVersion_DataverseClient>0.4.20</PackageVersion_DataverseClient>
+    <PackageVersion_CoverletCollector>3.1.0</PackageVersion_CoverletCollector>
+    <PackageVersion_Microsoft_Extensions>3.1.8</PackageVersion_Microsoft_Extensions>
+    <PackageVersion_SystemRuntime>6.0.0</PackageVersion_SystemRuntime>
+    <PackageVersion_SystemTextJsonVersion>7.0.3</PackageVersion_SystemTextJsonVersion>
+    <PackageVersion_SystemTextEncodingsWebVersion>7.0.0</PackageVersion_SystemTextEncodingsWebVersion>
+    
+    <!-- Test: -->
+    <PackageVersion_MicrosoftNETTestSdk>17.5.0</PackageVersion_MicrosoftNETTestSdk>
+    <PackageVersion_MSTest>2.2.10</PackageVersion_MSTest>
+    <PackageVersion_Moq>4.16.0</PackageVersion_Moq>
+    <PackageVersion_XUnit>2.4.2</PackageVersion_XUnit>
+    <PackageVersion_XUnitRunnerVS>2.4.5</PackageVersion_XUnitRunnerVS>
+    <PackageVersion_FluentAssertions>5.10.3</PackageVersion_FluentAssertions>
+
+    <!-- Assembly attributes are set by cake build. We need to disable autogeneration by msbuild -->
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- 
+    Create a corse level define to identity .net framework vs .net core 
+
+    This is to align with https://github.com/dotnet/designs/blob/main/accepted/2020/or-greater-defines/or-greater-defines.md 
+    which pre-defines some preprocessor symbols for source files. 
+
+    Also this has to be defined in Directory.build.targets to ensure it is evaluated after evaluating all properties
+    in .csproj files.
+    -->
+    <NETFRAMEWORK Condition="$(TargetFramework.ToLower().StartsWith('net4'))">true</NETFRAMEWORK>
+    <NETFRAMEWORK Condition="!$(TargetFramework.ToLower().StartsWith('net4'))">false</NETFRAMEWORK>
+    <NETFRAMEWORK Condition="'$(NETFRAMEWORK)'==''">true</NETFRAMEWORK>
+  </PropertyGroup>
+
+
+  <PropertyGroup>
+    <!-- this property must be re-defined in individual .csprojs or a .props file per component area -->
+    <ComponentAreaName Condition="'$(ComponentAreaName)' == ''">FORGOT-To-Set-ComponentAreaName</ComponentAreaName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <!-- These variables define the object and binary roots, respectively. -->
+    <RepoRoot Condition="'$(RepoRoot)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(MSBuildThisFileDirectory), ".."))))</RepoRoot>
+    <OutputRootDir Condition=" '$(OutputRootDir)' == '' ">$(RepoRoot)\bin\$(Configuration)\$(ComponentAreaName)\$(TargetFramework)</OutputRootDir>
+    <OutputRootDir>$(OutputRootDir.TrimEnd({'\\'}))</OutputRootDir>
+    <!-- These variables are the ones that the standard MSBuild targets recognize. -->
+    <OutDir Condition=" '$(OutDir)' =='' ">$([System.IO.Path]::Combine($(OutputRootDir), $(RelativeOutputPath)))</OutDir>
+    <!-- OutDir requires a trailing slash to prevent MSB8004 warning -->
+    <OutDir>$(OutDir.TrimEnd("\\"))\</OutDir>
+    <!-- Ensures OutputPath always matches OutDir -->
+    <OutputPath>$(OutDir)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SignAssembly)' == 'true'">
+    <AssemblyOriginatorKeyFile>$(RepoRoot)\build\crmkey\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NoWarn>$(NoWarn);CS8032</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CRMINTERNAL|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE;CRMINTERNAL</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+</Project>
