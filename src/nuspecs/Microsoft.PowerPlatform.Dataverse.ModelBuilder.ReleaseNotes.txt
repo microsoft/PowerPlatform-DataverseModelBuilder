@@ -1,0 +1,27 @@
+Notice: 
+    Class and Message Generation Utility for the Power Platform Dataverse API.
+    Port of the CrmServiceUtility to support updated Code Generator for Dataverse
+    General Documentation about CrmServiceUtility can be found here:
+        https://docs.microsoft.com/en-us/power-apps/developer/data-platform/org-service/generate-early-bound-classes
+
+++CURRENTRELEASEID++
+    --- BREAKING CHANGES ---
+    Assembly and File Versions bumped to 2.x to denote breaking changes. 
+    Refactored ModelBuilderLib Constructor. 
+    Removed all console write operations for statusing and replaced with events. 
+    Added Ilogger Support for capturing detailed output. 
+    Added control for emitting ETC code in code base (includeETC),  Defaulted to remove ETC on write. 
+    Updated Suppress Code Generation attribute behavior to remove tool version from files. 
+
+1.0.18:
+    Fix for GIT reported issue: https://github.com/microsoft/powerplatform-vscode/issues/362, Helped Dataverse Modelbuilder find its way... it now has a name and a version number. 
+    Fix for GIT reported issue https://github.com/microsoft/powerplatform-vscode/issues/361 , suppressINotifyPattern now properly acts as a toggle.
+    Fix for GIT reported issue: https://github.com/microsoft/powerplatform-vscode/issues/363  for missing description text for static functions.
+    Modified OptionSet Label value to respect the system default language configuration.
+
+1.0.9:
+    Fixed an issue where both /out and /outdirectory could be passed. This created a situation where there was confusion on which path directive would be used for writing. 
+    Fixed Perf issue where Messages were being loaded from Dataverse when they were not needed. 
+    
+1.0.4:
+    Initial Release of Cross Platform Port of the CrmServiceUtil.exe as the DataverseModelBuilder.exe

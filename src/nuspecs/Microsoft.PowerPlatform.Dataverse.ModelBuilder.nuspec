@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.PowerPlatform.Dataverse.ModelBuilder</id>
+    <version>1.0.0</version>
+    <authors>Microsoft</authors>
+    <owners>crmsdk,Microsoft</owners>
+    <licenseUrl>http://download.microsoft.com/download/E/1/8/E18C0FAD-FEC8-44CD-9A16-98EDC4DAC7A2/LicenseTerms.docx</licenseUrl>
+    <projectUrl>https://docs.microsoft.com/dynamics365/customer-engagement/developer/developer-guide</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <title>Microsoft Power Platform Model Builder</title>
+    <description>Dataverse Model Builder is used to generate classes and API contracts from Dataverse Metadata</description>
+    <summary>Used to Create Code Models for PowerPlatform Tables, API's and Choices. This utility is used in conjunction with the Dataverse ServiceClient and or the Dataverse Plugin System to support typed, rapid development of programs and plugins</summary>
+    <releaseNotes />
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <language>en-US</language>
+    <tags>Dynamics CRM 2016 SDK XRM D365 Dynamics365 365 Dataverse CDS PowerApps PowerPlatform</tags>
+    <icon>images\Dataverse.128x128.png</icon>
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="DataverseModelBuilderLib" version="1.*" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CrmSdk.XrmTooling.CoreAssembly" version="[9.1.1.7,)" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CrmSdk.XrmTooling.WpfControls" version="[9.1.1.7,)" exclude="Build,Analyzers" />
+        <dependency id="System.ServiceModel.Http" version="4.10.2" exclude="Build,Analyzers" />
+        <dependency id="System.ServiceModel.Security" version="4.10.2" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="6.0.7" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="PresentationCore" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Xml.XmlDocument" targetFramework=".NETFramework4.8" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="{sharedImagesDir}\Desktop\Dataverse.128x128.png" target="images\Dataverse.128x128.png" />
+    <file src="{licenseDir}\LicenseTerms.docx" target="tools\LicenseTerms.docx" />
+    <file src="{signedBinDir}\{configuration}\DvModelBuilder\net48\DataverseModelBuilder.exe" target="tools\DataverseModelBuilder.exe" />
+    <file src="{outDir}\DvModelBuilder\net48\DataverseModelBuilder.exe.config" target="tools\DataverseModelBuilder.exe.config" />
+  </files>
+</package>

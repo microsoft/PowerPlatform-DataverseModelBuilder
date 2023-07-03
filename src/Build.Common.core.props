@@ -1,0 +1,24 @@
+<Project>
+  <!-- dotnetCore specific msbuild properties: -->
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ProjectSpecificFx)' == ''">
+    <TargetFrameworks>net462;net472;net48;netstandard2.0;net6.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Features>IOperation</Features>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <Import Project=".\Build.Shared.props" />
+
+</Project>

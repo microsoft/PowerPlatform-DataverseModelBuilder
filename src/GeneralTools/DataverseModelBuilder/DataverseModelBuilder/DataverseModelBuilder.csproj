@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net48</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ComponentAreaName>DvModelBuilder</ComponentAreaName>
+		<ProjectGuid>{B46EBCDE-A65D-4D5B-B7BF-0C94DA3116B3}</ProjectGuid>
+		<RootNamespace>Microsoft.PowerPlatform.Dataverse.DataverseModelBuilder</RootNamespace>
+		<AssemblyName>DataverseModelBuilder</AssemblyName>
+		<SignAssembly>true</SignAssembly>
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
+	<Import Project="..\..\..\Build.Common.StandardAndLegacy.props" />
+	<PropertyGroup>
+		<ApplicationIcon>$(RepoRoot)\src\SharedImages\Desktop\Dataverse.ico</ApplicationIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.1.*" />
+		<PackageReference Include="Microsoft.CrmSdk.XrmTooling.WpfControls" Version="9.1.1.*" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="$(PackageVersion_Microsoft_Extensions)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(PackageVersion_Microsoft_Extensions)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(PackageVersion_Microsoft_Extensions)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="$(PackageVersion_Microsoft_Extensions)" />
+		<PackageReference Include="System.ServiceModel.Http" Version="4.10.2" />
+		<PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
+		<PackageReference Include="System.Text.Json" Version="6.0.7" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="ConnectionManagement\LoginControl\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DataverseModelBuilderLib\Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="PresentationCore" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+
+</Project>

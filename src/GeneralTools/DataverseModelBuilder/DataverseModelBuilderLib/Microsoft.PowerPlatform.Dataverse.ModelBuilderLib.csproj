@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net48;net6.0</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ComponentAreaName>DvModelBuilder</ComponentAreaName>
+		<ProjectGuid>{96E79925-DBF4-499B-A953-F7F3BF3BC035}</ProjectGuid>
+		<RootNamespace>Microsoft.PowerPlatform.Dataverse.ModelBuilderLib</RootNamespace>
+		<AssemblyName>Microsoft.PowerPlatform.Dataverse.ModelBuilderLib</AssemblyName>
+		<SignAssembly>true</SignAssembly>
+		<LangVersion>8.0</LangVersion>
+		<Version>$(VersionPrefix)</Version>
+	</PropertyGroup>
+	<Import Project="..\..\..\Build.Common.StandardAndLegacy.props" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Xrm.Sdk" Version="$(PackageVersion_CdsSdk)" IncludeAssets="All" />
+		<PackageReference Include="Microsoft.Crm.Sdk.Proxy" Version="$(PackageVersion_CrmProxy)" IncludeAssets="All" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="$(PackageVersion_Microsoft_Extensions)" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+		<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+		<PackageReference Include="System.Text.Json" Version="6.0.7" />
+		<PackageReference Include="System.CodeDom" Version="6.0.0" />
+		<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
+        <!-- explict add to deal with CVE-2023-29331  -->
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.3" />
+    </ItemGroup>
+	<PropertyGroup>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+
+</Project>
