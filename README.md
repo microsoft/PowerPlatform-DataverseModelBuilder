@@ -1,14 +1,24 @@
-# Project
+## Overview 
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+### Dataverse ModelBuilder Library
 
-As the maintainer of this project, please make a few updates:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+This is a utility library used by the Power Platform to create classes and API wrappers for the Power Platform Dataverse API.
+This utility is included in the [Power Platform CLI](https://learn.microsoft.com/power-platform/developer/cli/introduction) and the supporting library is available via nuget at [Microsoft.PowerPlatform.Dataverse.ModelBuilderLib](https://www.nuget.org/packages/Microsoft.PowerPlatform.Dataverse.ModelBuilderLib)
+
+### Dataverse ModelBuilder executable
+
+This is a .net framework client that wraps the Dataverse Modelbuilder Library, providing an implementation of the command line interface features and login features using the CrmServiceClient Login control.
+
+It is provided as an example implementation of a client using the Dataverse ModelBuilder Library and is not independently shipped as part of the distribution.
+
+## Change Log
+
+Current release notes and change log:
+
+[Microsoft.PowerPlatform.Dataverse.ModelBuilderLib](src/nuspecs/Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.ReleaseNotes.txt)
+
+
 
 ## Contributing
 
