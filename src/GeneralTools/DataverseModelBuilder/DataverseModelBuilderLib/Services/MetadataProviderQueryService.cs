@@ -29,32 +29,9 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
                 // also support partial names.
                 List<string> entityLogicalNames = Utility.Utilites.GetItemListFromString(_parameters.ToDictionary(), ";", "entitynamesfilter");
 
-                if (entityLogicalNames.Count() >= 0)
+                if (entityLogicalNames.Count >= 0)
                 {
                     return RetrieveFilteredEntities(service, entityLogicalNames);
-                }
-                
-                if (entityLogicalNames.Count() >= 0)
-                {
-                    // parse each list along the way now, to pick up the query settings.
-                    List<MetadataConditionExpression> _conditions = new List<MetadataConditionExpression>();
-                    foreach (var entName in entityLogicalNames)
-                    {
-                        _conditions.Add(new MetadataConditionExpression("logicalname", MetadataConditionOperator.Equals, entName));
-                    }
-                    MetadataFilterExpression entityFilter = new MetadataFilterExpression(Xrm.Sdk.Query.LogicalOperator.Or);
-                    entityFilter.Conditions.AddRange(_conditions);
-
-                    EntityQueryExpression query = new EntityQueryExpression();
-                    query.Criteria = entityFilter;
-                    query.Properties = new MetadataPropertiesExpression { AllProperties = true };
-
-                    RetrieveMetadataChangesRequest req = new RetrieveMetadataChangesRequest();
-                    req.Query = query;
-
-                    RetrieveMetadataChangesResponse resp = (RetrieveMetadataChangesResponse)service.Execute(req);
-
-                    return resp.EntityMetadata.ToArray();
                 }
             }
 
@@ -66,20 +43,19 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             return (EntityMetadata[])response.Results["EntityMetadata"];
         }
 
-        private static EntityMetadata[] RetrieveFilteredEntities(IOrganizationService service, List<string> _s1)
+        private static EntityMetadata[] RetrieveFilteredEntities(IOrganizationService service, List<string> entityLogicalNames)
         {
             var entityMetadataList = new List<EntityMetadata>();
 
             // Limit the number of conditions in the query to avoid the "Query on Entity has exceeded the hard limit of conditions in a single filter" error
-            var entityLogicalNames = _s1.Select((value, index) => new { Index = index, Value = value })
+            var groupedLogicalNames = entityLogicalNames.Select((value, index) => new { Index = index, Value = value })
                 .GroupBy(x => x.Index / MaxConditions)
-                .Select(group => group.Select(x => x.Value))
-                .ToList();
+                .Select(group => group.Select(x => x.Value));
 
-            foreach (var entityLogicalName in entityLogicalNames)
+            foreach (var logicalNameGroup in groupedLogicalNames)
             {
                 var entityFilter = new MetadataFilterExpression(Xrm.Sdk.Query.LogicalOperator.Or);
-                entityFilter.Conditions.AddRange(entityLogicalName.Select(e => new MetadataConditionExpression("logicalname", MetadataConditionOperator.Equals, e)));
+                entityFilter.Conditions.AddRange(logicalNameGroup.Select(e => new MetadataConditionExpression("logicalname", MetadataConditionOperator.Equals, e)));
 
                 var resp = (RetrieveMetadataChangesResponse)service.Execute(new RetrieveMetadataChangesRequest
                 {
