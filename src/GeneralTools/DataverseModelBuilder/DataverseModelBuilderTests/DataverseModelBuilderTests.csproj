@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ComponentAreaName>DvModelBuilder-Tests</ComponentAreaName>
 	  <TargetFrameworks>net48;net6.0</TargetFrameworks>
       <Nullable>enable</Nullable>
       <IsPackable>false</IsPackable>

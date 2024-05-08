@@ -49,6 +49,18 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
                 : null;
         }
 
+        /// <summary>
+        /// Check to see if the param name is on the restricted list.. if it is return the replacement name, else return the original name.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        public static string GetNameForParameter(string parameterName)
+        {
+            return _restrictedParameterNames.ContainsKey(parameterName.ToLower())
+                ? _restrictedParameterNames[parameterName.ToLower()]
+                : parameterName;
+        }
+
         #endregion
 
         /// <summary>
@@ -109,9 +121,23 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
                 { "cc", "Cc"},
                 { "bcc", "Bcc"}
             };
+
+            if (_restrictedParameterNames != null) return;
+
+            _restrictedParameterNames = new Dictionary<string, string>
+            {
+                { "parameters", "Parameters_1" },
+                { "requestid", "Requestid_1" },
+                { "requestname", "Requestname_1" },
+                { "item", "Item_1" },
+                { "responsename", "Responsename_1" },
+                { "results", "Results_1" },
+
+            };
         }
 
         private static Dictionary<string, string> _attributeNames;
+        private static Dictionary<string, string> _restrictedParameterNames;
     }
 
     internal sealed class NamingService : INamingService
@@ -330,7 +356,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             if (this._knowNames.ContainsKey(request.Id.ToString() + requestField.Index.ToString(CultureInfo.InvariantCulture)))
                 return this._knowNames[request.Id.ToString() + requestField.Index.ToString(CultureInfo.InvariantCulture)];
 
-            string name = CreateValidName(requestField.Name);
+            string name = CreateValidName(StaticNamingService.GetNameForParameter(requestField.Name));
             this._knowNames.Add(request.Id.ToString() + requestField.Index.ToString(CultureInfo.InvariantCulture), name);
             return name;
         }
@@ -340,7 +366,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             if (this._knowNames.ContainsKey(response.Id.ToString() + responseField.Index.ToString(CultureInfo.InvariantCulture)))
                 return this._knowNames[response.Id.ToString() + responseField.Index.ToString(CultureInfo.InvariantCulture)];
 
-            string name = CreateValidName(responseField.Name);
+            string name = CreateValidName(StaticNamingService.GetNameForParameter(responseField.Name));
             this._knowNames.Add(response.Id.ToString() + responseField.Index.ToString(CultureInfo.InvariantCulture), name);
             return name;
         }

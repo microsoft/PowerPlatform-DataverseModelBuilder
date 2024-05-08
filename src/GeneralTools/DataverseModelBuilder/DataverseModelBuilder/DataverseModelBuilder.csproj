@@ -23,9 +23,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(PackageVersion_Microsoft_Extensions)" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(PackageVersion_Microsoft_Extensions)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="$(PackageVersion_Microsoft_Extensions)" />
-		<PackageReference Include="System.ServiceModel.Http" Version="4.10.2" />
-		<PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
-		<PackageReference Include="System.Text.Json" Version="6.0.7" />
+		<PackageReference Include="System.Text.Json" Version="$(PackageVersion_SystemTextJson)" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="ConnectionManagement\LoginControl\" />

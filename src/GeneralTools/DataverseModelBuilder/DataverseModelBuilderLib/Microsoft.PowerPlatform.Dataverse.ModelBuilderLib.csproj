@@ -16,13 +16,10 @@
 		<PackageReference Include="Microsoft.Xrm.Sdk" Version="$(PackageVersion_CdsSdk)" IncludeAssets="All" />
 		<PackageReference Include="Microsoft.Crm.Sdk.Proxy" Version="$(PackageVersion_CrmProxy)" IncludeAssets="All" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="$(PackageVersion_Microsoft_Extensions)" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="$(PackageVersion_SystemConfigurationConfigurationManager)" />
 		<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
-		<PackageReference Include="System.Text.Json" Version="6.0.7" />
+		<PackageReference Include="System.Text.Json" Version="$(PackageVersion_SystemTextJson)" />
 		<PackageReference Include="System.CodeDom" Version="6.0.0" />
-		<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
-        <!-- explict add to deal with CVE-2023-29331  -->
-        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.3" />
     </ItemGroup>
 	<PropertyGroup>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>

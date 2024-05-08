@@ -5,6 +5,10 @@ Notice:
         https://docs.microsoft.com/en-us/power-apps/developer/data-platform/org-service/generate-early-bound-classes
 
 ++CURRENTRELEASEID++
+Dependency changes:
+    System.Text.Json moved to 7.0.3
+
+2.0.6:
     --- BREAKING CHANGES ---
     Assembly and File Versions bumped to 2.x to denote breaking changes. 
     Refactored ModelBuilderLib Constructor. 
