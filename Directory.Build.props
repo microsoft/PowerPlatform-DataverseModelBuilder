@@ -1,7 +1,6 @@
 <Project InitialTargets="VerifyBuildProps">
   <!-- See: https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019#directorybuildprops-and-directorybuildtargets -->
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <IsOfficialBuild Condition="'$(IsOfficialBuild)' == ''">false</IsOfficialBuild>
 
     <!-- Because the default value in MSBuild doesn't get set until after Directory.Build.props, and we need it, we set the default here. -->
@@ -10,7 +9,25 @@
 
   <PropertyGroup Label="Build layout">
     <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <RepoBuildExtensions>$(RepoRoot)build\extensions\</RepoBuildExtensions>
     <SrcRoot>$(RepoRoot)src\</SrcRoot>
+    <!-- While the semantics are different, for backwards compatibility, this is different than our custom $(DropRootDirectory) defined in Common.props. namely, it includes the final backslash, per convention. -->
+    <DropRootDirectory Condition="'$(DropRootDirectory)' == ''">$(RepoRoot)</DropRootDirectory>
+
+    <!-- Latest MSBuild tools uses the $(BaseOutputPath) and $(OutputPath) properties. Legacy properties are set based on them in Microsoft.Common.targets.
+    By default, we configure the BaseOutputPath to the drop folder. Other adaptations to the final OutputPath can be done after this occurs.
+    -->
+    <BaseOutputPath>$(DropRootDirectory)bin\$(Configuration)\$(MSBuildProjectName)\</BaseOutputPath>
+    <!--
+    Since we won't know the target framework folder (if applicable) when this file gets evaluated, we can't set
+    the OutputPath correctly here. In general, this should be done in a Directory.Build.targets if needed.
+    But it's preferrable to only change the BaseOutputPath and let the OutputPath be computed by standard MSBuild props/targets.
+      <OutputPath>$(BaseOutputPath)\$(TargetFramework)\</OutputPath> -->
+    <!-- Force empty, so SDK will compute relative to the BaseOutputPath. It will also allow binlog to identify any locations where this gets changed. (the first set of a property isn't reported) -->
+    <OutputPath></OutputPath>
+
+    <!-- Save packages outside of the project's bin folder and into a central location to simplify actions on them. e.g. signing
+    <PackageOutputPath>$(DropRootDirectory)package\signed\$(Configuration)\</PackageOutputPath>-->
   </PropertyGroup>
 
   <PropertyGroup Label="Official build defaults" Condition="'$(IsOfficialBuild)' == 'true'">

@@ -5,6 +5,11 @@ Notice:
         https://docs.microsoft.com/en-us/power-apps/developer/data-platform/org-service/generate-early-bound-classes
 
 ++CURRENTRELEASEID++
+    Accepted fix proposed by daryllabar on git - PR: https://github.com/microsoft/PowerPlatform-DataverseModelBuilder/pull/21
+    Fix for GIT reported issue: https://github.com/microsoft/PowerPlatform-DataverseModelBuilder/issues/17, Shipped SDK message names are masking Organization Request / Response base class names. Overridden parameter names will now appear with a _1 added to them. 
+    Updated dependencies. 
+
+1.0.19:
     --- BREAKING CHANGES ---
     Assembly and File Versions bumped to 2.x to denote breaking changes. 
     Refactored ModelBuilderLib Constructor. 

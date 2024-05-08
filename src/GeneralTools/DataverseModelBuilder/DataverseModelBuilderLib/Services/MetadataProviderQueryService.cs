@@ -3,12 +3,9 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
@@ -16,6 +13,8 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
     internal sealed class MetadataProviderQueryService : IMetadataProviderQueryService
     {
         private readonly ModelBuilderInvokeParameters _parameters;
+        private const int MaxConditions = 20; 
+        
         internal MetadataProviderQueryService(ModelBuilderInvokeParameters parameters)
         {
             this._parameters = parameters;
@@ -29,29 +28,11 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             {
                 // Read entities from filter list // expand this to support optionsets and such.
                 // also support partial names.
-                List<string> _s1 = Utility.Utilites.GetItemListFromString(_parameters.ToDictionary(), ";", "entitynamesfilter");
+                List<string> entityLogicalNames = Utility.Utilites.GetItemListFromString(_parameters.ToDictionary(), ";", "entitynamesfilter");
 
-                if (_s1.Count() >= 0)
+                if (entityLogicalNames.Count() >= 0)
                 {
-                    // parse each list along the way now, to pick up the query settings.
-                    List<MetadataConditionExpression> _conditions = new List<MetadataConditionExpression>();
-                    foreach (var entName in _s1)
-                    {
-                        _conditions.Add(new MetadataConditionExpression("logicalname", MetadataConditionOperator.Equals, entName));
-                    }
-                    MetadataFilterExpression entityFilter = new MetadataFilterExpression(Xrm.Sdk.Query.LogicalOperator.Or);
-                    entityFilter.Conditions.AddRange(_conditions);
-
-                    EntityQueryExpression query = new EntityQueryExpression();
-                    query.Criteria = entityFilter;
-                    query.Properties = new MetadataPropertiesExpression() { AllProperties = true };
-
-                    RetrieveMetadataChangesRequest req = new RetrieveMetadataChangesRequest();
-                    req.Query = query;
-
-                    RetrieveMetadataChangesResponse resp = (RetrieveMetadataChangesResponse)service.Execute(req);
-
-                    return (EntityMetadata[])resp.EntityMetadata.ToArray();
+                    return RetrieveFilteredEntities(service, entityLogicalNames);
                 }
             }
 
@@ -62,6 +43,36 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             OrganizationResponse response = service.Execute(request);
             return (EntityMetadata[])response.Results["EntityMetadata"];
         }
+
+        private static EntityMetadata[] RetrieveFilteredEntities(IOrganizationService service, List<string> entityLogicalNames)
+        {
+            var entityMetadataList = new List<EntityMetadata>();
+
+            // Limit the number of conditions in the query to avoid the "Query on Entity has exceeded the hard limit of conditions in a single filter" error
+            var groupedLogicalNames = entityLogicalNames.Select((value, index) => new { Index = index, Value = value })
+                .GroupBy(x => x.Index / MaxConditions)
+                .Select(group => group.Select(x => x.Value));
+
+            foreach (var logicalNameGroup in groupedLogicalNames)
+            {
+                var entityFilter = new MetadataFilterExpression(Xrm.Sdk.Query.LogicalOperator.Or);
+                entityFilter.Conditions.AddRange(logicalNameGroup.Select(e => new MetadataConditionExpression("logicalname", MetadataConditionOperator.Equals, e)));
+
+                var resp = (RetrieveMetadataChangesResponse)service.Execute(new RetrieveMetadataChangesRequest
+                {
+                    Query = new EntityQueryExpression
+                    {
+                        Criteria = entityFilter,
+                        Properties = new MetadataPropertiesExpression { AllProperties = true }
+                    }
+                });
+
+                entityMetadataList.AddRange(resp.EntityMetadata);
+            }
+
+            return entityMetadataList.ToArray();
+        }
+
 
         public Xrm.Sdk.Metadata.OptionSetMetadataBase[] RetrieveOptionSets(Xrm.Sdk.IOrganizationService service)
         {
