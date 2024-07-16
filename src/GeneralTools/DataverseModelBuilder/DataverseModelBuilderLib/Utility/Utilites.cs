@@ -5,9 +5,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility
 {
@@ -64,7 +62,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility
             options.IndentString = "\t";
             options.VerbatimOrder = true;
 
-            StringBuilder sb = new StringBuilder(); 
+            StringBuilder sb = new StringBuilder();
             using (StringWriter textWriter = new StringWriter(sb))
             {
                 using (CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp"))
@@ -120,34 +118,52 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility
 
         public static bool IsNotExposedChildAttribute(AttributeMetadata attributeMetadata, ModelBuilderInvokeParameters builderInvokeParameters)
         {
-            bool rslt = false; 
+            bool rslt = false;
             if (builderInvokeParameters.EmitVirtualAttributes)
             {
-                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf) &&
-                        !(attributeMetadata is ImageAttributeMetadata) &&
-                        !attributeMetadata.LogicalName.EndsWith("_url", StringComparison.OrdinalIgnoreCase) &&
-                        !attributeMetadata.LogicalName.EndsWith("_timestamp", StringComparison.OrdinalIgnoreCase) &&
-                        !((attributeMetadata.LogicalName.Length > 4) && attributeMetadata.LogicalName.EndsWith("name", StringComparison.OrdinalIgnoreCase));
+                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf)
+                    && !(attributeMetadata is ImageAttributeMetadata)
+                    && !attributeMetadata.LogicalName.EndsWith("_url", StringComparison.OrdinalIgnoreCase)
+                    && !attributeMetadata.LogicalName.EndsWith("_timestamp", StringComparison.OrdinalIgnoreCase)
+                    && !((attributeMetadata.LogicalName.Length > 4) && attributeMetadata.LogicalName.EndsWith("name", StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf) &&
-                    !(attributeMetadata is ImageAttributeMetadata) &&
-                    !attributeMetadata.LogicalName.EndsWith("_url", StringComparison.OrdinalIgnoreCase) &&
-                    !attributeMetadata.LogicalName.EndsWith("_timestamp", StringComparison.OrdinalIgnoreCase);
+                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf)
+                    && !(attributeMetadata is ImageAttributeMetadata)
+                    && !attributeMetadata.LogicalName.EndsWith("_url", StringComparison.OrdinalIgnoreCase)
+                    && !attributeMetadata.LogicalName.EndsWith("_timestamp", StringComparison.OrdinalIgnoreCase);
             }
             return rslt;
         }
 
-        public static bool IsReadFromFormatedValues(AttributeMetadata attributeMetadata, ModelBuilderInvokeParameters builderInvokeParameters)
+        public static bool IsReadFromFormattedValues(EntityMetadata entity, AttributeMetadata attributeMetadata, ModelBuilderInvokeParameters builderInvokeParameters)
         {
             bool rslt = false;
             if (builderInvokeParameters.EmitVirtualAttributes)
             {
-                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf) &&
-                        ((attributeMetadata.LogicalName.Length > 4) && attributeMetadata.LogicalName.EndsWith("name", StringComparison.OrdinalIgnoreCase));
+                rslt = !String.IsNullOrEmpty(attributeMetadata.AttributeOf)
+                    && attributeMetadata.LogicalName.Length > 4
+                    && attributeMetadata.LogicalName.EndsWith("name", StringComparison.OrdinalIgnoreCase)
+                    && !IsNameAttributeOfFileAttribute(entity, attributeMetadata);
             }
             return rslt;
+        }
+
+        /// <summary>
+        /// Name Attributes for File column type Attributes are unique in that they don't actually get stored in the FormattedValues collection, but the normal Attributes collection.
+        /// </summary>
+        private static bool IsNameAttributeOfFileAttribute(EntityMetadata entity, AttributeMetadata attributeMetadata)
+        {
+            if (string.IsNullOrEmpty(attributeMetadata.AttributeOf)
+                || attributeMetadata.LogicalName.Length < 5
+                || !attributeMetadata.LogicalName.EndsWith("_name", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var attributeOf = entity.Attributes.FirstOrDefault(a => a.LogicalName == attributeMetadata.AttributeOf) as FileAttributeMetadata;
+            return attributeOf != null;
         }
     }
 }

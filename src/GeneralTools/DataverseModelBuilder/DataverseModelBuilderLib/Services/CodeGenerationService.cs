@@ -1,24 +1,24 @@
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.CodeDom.Compiler;
-using System.Runtime.Serialization;
-using System.Diagnostics;
-using System.Globalization;
+using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.DefaultCustomziations;
+using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Metadata;
+using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
-using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.DefaultCustomziations;
-using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 {
-	[SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "The extra coupling is temporary.")]
+    [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "The extra coupling is temporary.")]
 	internal sealed class CodeGenerationService : ICodeGenerationService
 	{
 		#region Fields
@@ -656,7 +656,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 			property.HasGet = attribute.IsValidForRead.GetValueOrDefault() || property.HasSet;
 			if (property.HasGet)
 			{
-				property.GetStatements.AddRange(BuildAttributeGet(attribute, targetType));
+				property.GetStatements.AddRange(BuildAttributeGet(entity, attribute, targetType));
 			}
 			if (property.HasSet)
 			{
@@ -689,7 +689,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 			return property;
 		}
 
-		private static CodeStatementCollection BuildAttributeGet(AttributeMetadata attribute, CodeTypeReference targetType)
+		private static CodeStatementCollection BuildAttributeGet(EntityMetadata entity, AttributeMetadata attribute, CodeTypeReference targetType)
 		{
 			var statements = new CodeStatementCollection();
 
@@ -701,7 +701,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 			{
 				// return this.GetAttributeValue<targetType>("attributeLogicalName");
 
-				if (!Utilites.IsReadFromFormatedValues(attribute, _parameters))
+				if (!Utilites.IsReadFromFormattedValues(entity, attribute, _parameters))
 				{
 					statements.Add(Return(ThisMethodInvoke("GetAttributeValue", targetType, StringLiteral(attribute.LogicalName))));
                 }

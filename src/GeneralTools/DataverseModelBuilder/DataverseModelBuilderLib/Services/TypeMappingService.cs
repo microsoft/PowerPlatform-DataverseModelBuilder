@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.CodeDom;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-
-
+using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.PowerPlatform.Dataverse.ModelBuilderLib.Utility;
+using System;
+using System.CodeDom;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 {
-	internal sealed class TypeMappingService : ITypeMappingService
+    internal sealed class TypeMappingService : ITypeMappingService
 	{
 		#region Fields
-		private Dictionary<AttributeTypeCode, Type> _attributeTypeMapping;
+		private Dictionary<AttributeTypeCode, Type> _attributeTypeCodeMapping;
+		private Dictionary<Type, Type> _attributeTypeMapping;
 		private string _namespace;
 		ModelBuilderInvokeParameters _parameters;
         #endregion
@@ -28,29 +24,37 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
             _parameters = parameters;
             _namespace = parameters.Namespace;
 
-            _attributeTypeMapping = new Dictionary<AttributeTypeCode, Type>();
-			_attributeTypeMapping.Add(AttributeTypeCode.Boolean, typeof(bool));
-			_attributeTypeMapping.Add(AttributeTypeCode.ManagedProperty, typeof(BooleanManagedProperty));
-			_attributeTypeMapping.Add(AttributeTypeCode.CalendarRules, typeof(object));
-			_attributeTypeMapping.Add(AttributeTypeCode.Customer, typeof(EntityReference));
-			_attributeTypeMapping.Add(AttributeTypeCode.DateTime, typeof(DateTime));
-			_attributeTypeMapping.Add(AttributeTypeCode.Decimal, typeof(decimal));
-			_attributeTypeMapping.Add(AttributeTypeCode.Double, typeof(double));
-			_attributeTypeMapping.Add(AttributeTypeCode.Integer, typeof(int));
-			_attributeTypeMapping.Add(AttributeTypeCode.EntityName, typeof(string));
-			_attributeTypeMapping.Add(AttributeTypeCode.BigInt, typeof(Int64));
-			_attributeTypeMapping.Add(AttributeTypeCode.Lookup, typeof(EntityReference));
-			_attributeTypeMapping.Add(AttributeTypeCode.Memo, typeof(string));
-			_attributeTypeMapping.Add(AttributeTypeCode.Money, typeof(Money));
-			_attributeTypeMapping.Add(AttributeTypeCode.Owner, typeof(EntityReference));
-			// AttributeType.PartyList handled in logic directly
-			//_attributeTypeMapping.Add(AttributeTypeCode.Picklist, typeof(OptionSetValue));
-			// AttributeType.State handled in logic directly
-			//_attributeTypeMapping.Add(AttributeTypeCode.Status, typeof(OptionSetValue));
-			_attributeTypeMapping.Add(AttributeTypeCode.String, typeof(string));
-			_attributeTypeMapping.Add(AttributeTypeCode.Uniqueidentifier, typeof(Guid));
-			// TODO: What should AttributeType.Virtual be generated as if it is encountered?
-		}
+            _attributeTypeCodeMapping = new Dictionary<AttributeTypeCode, Type>
+            {
+                { AttributeTypeCode.Boolean, typeof(bool) },
+                { AttributeTypeCode.ManagedProperty, typeof(BooleanManagedProperty) },
+                { AttributeTypeCode.CalendarRules, typeof(object) },
+                { AttributeTypeCode.Customer, typeof(EntityReference) },
+                { AttributeTypeCode.DateTime, typeof(DateTime) },
+                { AttributeTypeCode.Decimal, typeof(decimal) },
+                { AttributeTypeCode.Double, typeof(double) },
+                { AttributeTypeCode.Integer, typeof(int) },
+                { AttributeTypeCode.EntityName, typeof(string) },
+                { AttributeTypeCode.BigInt, typeof(Int64) },
+                { AttributeTypeCode.Lookup, typeof(EntityReference) },
+                { AttributeTypeCode.Memo, typeof(string) },
+                { AttributeTypeCode.Money, typeof(Money) },
+                { AttributeTypeCode.Owner, typeof(EntityReference) },
+                // AttributeType.PartyList handled in logic directly
+                // { AttributeTypeCode.Picklist, typeof(OptionSetValue) },
+                // AttributeType.State handled in logic directly
+                // { AttributeTypeCode.Status, typeof(OptionSetValue) },
+                { AttributeTypeCode.String, typeof(string) },
+                { AttributeTypeCode.Uniqueidentifier, typeof(Guid) }
+            };
+
+            // TODO: AttributeType.Virtual columns need to be added to _attributeTypeMapping
+            _attributeTypeMapping = new Dictionary<Type, Type>
+            {
+                { typeof(ImageAttributeMetadata), typeof(byte[]) },
+                { typeof(FileAttributeMetadata), typeof(Guid) }
+            };
+        }
 		#endregion
 
 		#region Properties
@@ -74,25 +78,25 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 		{
 			Type targetType = typeof(object);
 
-			if (Utilites.IsReadFromFormatedValues(attributeMetadata, _parameters))
-				return TypeRef(typeof(string)); // this will create a 'formatedvalue' property.. return this as a string.
+			if (Utilites.IsReadFromFormattedValues(entityMetadata, attributeMetadata, _parameters))
+				return TypeRef(typeof(string)); // this will create a 'formattedvalue' property. Return this as a string.
 
 
             if (attributeMetadata.AttributeType != null)
 			{
-				AttributeTypeCode attributeType = attributeMetadata.AttributeType.Value;
-				if (_attributeTypeMapping.ContainsKey(attributeType))
+				AttributeTypeCode attributeTypeCode = attributeMetadata.AttributeType.Value;
+				if (_attributeTypeCodeMapping.TryGetValue(attributeTypeCode, out var typeForAttributeTypeCode))
 				{
-					targetType = _attributeTypeMapping[attributeType];
+					targetType = typeForAttributeTypeCode;
 				}
-				else if (attributeType == AttributeTypeCode.PartyList)
+				else if (_attributeTypeMapping.TryGetValue(typeof(AttributeMetadata), out var typeForAttributeType))
+                {
+					targetType = typeForAttributeType;
+                }
+                else if (attributeTypeCode == AttributeTypeCode.PartyList)
 				{
 					return this.BuildCodeTypeReferenceForPartyList(services);
 				}
-				else if (attributeMetadata is ImageAttributeMetadata)
-				{
-					targetType = typeof(byte[]);
-				}				
 				else
 				{
 					OptionSetMetadataBase attributeOptionSet = GetAttributeOptionSet(attributeMetadata);
@@ -101,7 +105,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
                         var result = this.BuildCodeTypeReferenceForOptionSet(attributeMetadata.LogicalName, entityMetadata, attributeOptionSet, services);
                         if ( result.BaseType.Equals("System.Object"))  // Handle fall though of Option Sets where no matching enum is present. 
                         {
-                            if (attributeType.Equals(AttributeTypeCode.Picklist) || attributeType.Equals(AttributeTypeCode.Status))
+                            if (attributeTypeCode.Equals(AttributeTypeCode.Picklist) || attributeTypeCode.Equals(AttributeTypeCode.Status))
                             {
                                 targetType = typeof(OptionSetValue);
                                 if (targetType.IsValueType)
