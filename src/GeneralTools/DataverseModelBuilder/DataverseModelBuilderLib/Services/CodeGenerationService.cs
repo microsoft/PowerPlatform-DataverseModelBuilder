@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 			{
 				bool isGenericType = false;
 				CodeStatementCollection ctorStatements = new CodeStatementCollection();
-				if (sdkMessageRequest.RequestFields != null & sdkMessageRequest.RequestFields.Count > 0)
+				if (sdkMessageRequest.RequestFields != null && sdkMessageRequest.RequestFields.Count > 0)
 				{
 					foreach (SdkMessageRequestField field in sdkMessageRequest.RequestFields.Values)
 					{
@@ -1447,7 +1447,7 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 			try
 			{
 
-				if (sdkMessageResponse != null && sdkMessageResponse.ResponseFields != null & sdkMessageResponse.ResponseFields.Count > 0)
+				if (sdkMessageResponse != null && sdkMessageResponse.ResponseFields != null && sdkMessageResponse.ResponseFields.Count > 0)
 				{
 					foreach (SdkMessageResponseField field in sdkMessageResponse.ResponseFields.Values)
 					{
@@ -1546,7 +1546,6 @@ namespace Microsoft.PowerPlatform.Dataverse.ModelBuilderLib
 
         private static CodeStatement BuildResponseFieldGetStatement(SdkMessageResponseField field, CodeTypeReference targetType)
 		{
-			//return (T)this.Parameters[(attributelogicalname}];
 			return If(ContainsResult(field.Name),
 				Return(Cast(targetType, PropertyIndexer(ResultsPropertyName, field.Name))),
 				Return(new CodeDefaultValueExpression(targetType)));
